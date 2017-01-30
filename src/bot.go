@@ -22,7 +22,7 @@ var (
 
 // fileServer 呼叫內建的檔案伺服器來提供瀏覽器在網頁上瀏覽檔案。
 func fileServer() {
-	http.Handle("/", http.FileServer(http.Dir(fmt.Sprintln("%s/files", DIR))))
+	http.Handle("/", http.FileServer(http.Dir(fmt.Sprintf("%s/files", DIR))))
 	http.ListenAndServe(":"+PORT, nil)
 }
 
@@ -68,6 +68,7 @@ func bot(c *cli.Context) {
 	BOT, _ = api.NewBotAPI(TOKEN)
 	BOT.Debug = true
 
+	// 尊重、包容、友善。
 	log.Printf("連線已經成功驗證於 %s", BOT.Self.UserName)
 
 	u := api.NewUpdate(0)
@@ -87,6 +88,7 @@ func bot(c *cli.Context) {
 			isMentioned = true
 		}
 
+		// 以另一個行程執行，如此一來就算發生非常底層的錯誤也不會導致主程式死亡。
 		go func(u api.Update) {
 
 			// 捕捉到了底層異常則回復並繼續執行，避免 BOT 因為 panic() 而死亡。
@@ -138,17 +140,26 @@ func bot(c *cli.Context) {
 				buttons = append(buttons, api.NewInlineKeyboardButtonURL(size, fmt.Sprintf("http://%s:%s/%s.jpg", ADDR, PORT, id)))
 			}
 
-			// 建立鍵盤按鍵列。
-			kbd := api.NewInlineKeyboardMarkup(
-				api.NewInlineKeyboardRow(buttons...),
-			)
+			// 建立鍵盤按鍵列，並以數量來作為排列基準。
+			var kbd api.InlineKeyboardMarkup
+			switch len(buttons) {
+			case 1, 2, 3:
+				kbd = api.NewInlineKeyboardMarkup(
+					api.NewInlineKeyboardRow(buttons...),
+				)
+			case 4:
+				kbd = api.NewInlineKeyboardMarkup(
+					api.NewInlineKeyboardRow(buttons[0], buttons[1]),
+					api.NewInlineKeyboardRow(buttons[2], buttons[3]),
+				)
+			}
 
 			// 稍後將會輸出的訊息。
 			formattedMsg := "```"
 			formattedMsg += list
 			formattedMsg += "```"
 			formattedMsg += "--\n"
-			formattedMsg += "Took: %s\n"
+			formattedMsg += "_Took: %s_\n"
 			formattedMsg += "_The file will be served at_ [%s](http://%s:%s)"
 			formattedMsg = fmt.Sprintf(formattedMsg, time.Since(start), ADDR, ADDR, PORT)
 
