@@ -2,7 +2,9 @@
 
 卡西卓是一個 Telegram 機器人，能夠將接收、被標記到的圖片儲存至本地端並且供他人在瀏覽器上觀賞（這將會啟動 Golang 內建檔案伺服器）。
 
-## 螢幕截圖
+## 訊息預覽
+
+![](http://i.imgur.com/9gXmzov.png)
 
 ## 相依性
 無。
@@ -29,9 +31,9 @@
    --version, -v  顯示版本號碼。
 ```
 
-## 編譯
+## 跨平台編譯
 
-此程式以 Golang 撰寫，請安裝 Go 以重新編譯。更多平台請參考[此列表](https://golang.org/doc/install/source#environment)。
+此程式以 Golang 撰寫，請安裝 Go 以進行跨平台編譯，跨平台時不需安裝其他元件。更多平台請參考[此列表](https://golang.org/doc/install/source#environment)。
 
 ```bash
 # For macOS
