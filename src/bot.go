@@ -18,6 +18,7 @@ import (
 var (
 	DIR, TOKEN, PORT, ADDR string
 	BOT                    *api.BotAPI
+	WITH_PORT              bool
 )
 
 // fileServer 呼叫內建的檔案伺服器來提供瀏覽器在網頁上瀏覽檔案。
@@ -56,6 +57,7 @@ func bot(c *cli.Context) {
 	TOKEN = c.String("token")
 	ADDR = c.String("addr")
 	PORT = c.String("port")
+	WITH_PORT = c.Bool("with-port")
 
 	// 建立檔案資料夾如果不存在的話。
 	newpath := filepath.Join(DIR, "files")
@@ -137,7 +139,11 @@ func bot(c *cli.Context) {
 				// 在清單中加入這個圖片尺寸。
 				list += fmt.Sprintf("\n[%d] - %9s | %6d Bytes", i, size, v.FileSize)
 				// 建立一個按鈕給這個圖片尺寸。
-				buttons = append(buttons, api.NewInlineKeyboardButtonURL(size, fmt.Sprintf("http://%s:%s/%s.jpg", ADDR, PORT, id)))
+				if WITH_PORT {
+					buttons = append(buttons, api.NewInlineKeyboardButtonURL(size, fmt.Sprintf("http://%s:%s/%s.jpg", ADDR, PORT, id)))
+				} else {
+					buttons = append(buttons, api.NewInlineKeyboardButtonURL(size, fmt.Sprintf("http://%s/%s.jpg", ADDR, id)))
+				}
 			}
 
 			// 建立鍵盤按鍵列，並以數量來作為排列基準。
@@ -160,8 +166,13 @@ func bot(c *cli.Context) {
 			formattedMsg += "```"
 			formattedMsg += "--\n"
 			formattedMsg += "_Took: %s_\n"
-			formattedMsg += "_The file will be served at_ [%s](http://%s:%s)"
-			formattedMsg = fmt.Sprintf(formattedMsg, time.Since(start), ADDR, ADDR, PORT)
+			if WITH_PORT {
+				formattedMsg += "_The file will be served at_ [%s](http://%s:%s/)"
+				formattedMsg = fmt.Sprintf(formattedMsg, time.Since(start), ADDR, ADDR, PORT)
+			} else {
+				formattedMsg += "_The file will be served at_ [%s](http://%s/)"
+				formattedMsg = fmt.Sprintf(formattedMsg, time.Since(start), ADDR, ADDR)
+			}
 
 			// 建立編輯訊息的設定建構體。
 			edit := api.EditMessageTextConfig{

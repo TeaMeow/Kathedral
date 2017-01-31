@@ -29,6 +29,10 @@ func main() {
 			Usage: "The port that Kathedral runs the Golang native file server.",
 			Value: "8888",
 		},
+		cli.BoolFlag{
+			Name:  "with-port",
+			Usage: "Show the link with the port?",
+		},
 	}
 
 	app.Run(os.Args)
