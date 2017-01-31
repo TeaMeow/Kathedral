@@ -27,6 +27,7 @@
    --token 值     Telegram 的機器人 Token。
    --addr  值     檔案伺服器的網址，將會被用在連結按鈕上。（預設：“example.com”）
    --port  值     Kathedral 將會在此埠口部署 Golang 原生檔案伺服器以暴露取得到的圖片。（預設：“:8888”）
+   --with-port    連接是否該帶有埠口？
    --help, -h     顯示說明。
    --version, -v  顯示版本號碼。
 ```
